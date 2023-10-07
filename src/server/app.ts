@@ -180,8 +180,7 @@ export class App {
 
                 let pathname = url_info.pathname as string;
 
-                let handler = this.findHander(pathname as string);
-
+              
 
                 let postData = "";
                 request.on("data", (postDataChunk) => {
@@ -206,9 +205,6 @@ export class App {
 
                     Object.assign(params, url_info.query);
 
-                    for (let i = 0; i < handler.gets.length; i++) {
-                        params["$" + i] = handler.gets[i];
-                    }
                     params["$$"] = pathname;
 
                     let that = this;
@@ -253,6 +249,12 @@ export class App {
                             return;
                         }
                     }
+                    let handler = this.findHander(pathname as string);
+
+                    for (let i = 0; i < handler.gets.length; i++) {
+                        params["$" + i] = handler.gets[i];
+                    }
+                    
                     let doHandler = handler.handler;
                     if (this._modules[pathname]) {
                         if (!params.app) {
