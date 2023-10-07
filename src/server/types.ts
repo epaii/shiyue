@@ -1,14 +1,14 @@
 
 import * as http from "http";
-import * as https from 'https';
 import { App } from "./app";
 import { type } from "os";
+
 
 export type PromiseAble = Promise<void> | void
 
 
 export interface Context {
-    canNext:boolean,
+    canNext: boolean,
     res: http.ServerResponse,
     req: http.IncomingMessage,
     shareData: Object,
@@ -32,8 +32,17 @@ export interface InitHandler {
 
 
 
- 
+
 export interface Controller {
     new(): IController;
-    (): IController; 
+    (): IController;
 }
+
+
+export interface ResponseOriginData {
+    data: any;
+    success: boolean;
+    msg?: string
+}
+
+export type ResponseBodyAdvice = (data: ResponseOriginData) => string | Promise<string>;
