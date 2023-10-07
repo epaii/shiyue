@@ -1,7 +1,7 @@
 import { Context, ContextHandler, Controller } from "./types";
 type Decorator<T> = (target: T, name?: any) => void;
 
-async function runUse(uses: ContextHandler[], ctx: Context): Promise< boolean >{
+async function runUse(uses: ContextHandler[], ctx: Context): Promise<boolean> {
     for (let index = 0; index < uses.length; index++) {
         const element = uses[index];
         await element(ctx);
@@ -16,8 +16,7 @@ async function runUse(uses: ContextHandler[], ctx: Context): Promise< boolean >{
 export function Use(handler: ContextHandler): Decorator<any> {
 
     return (target: any, name?: any) => {
-        if(!target.prototype)
-        {
+        if (!target.prototype) {
             target.prototype = target;
         }
         if (name) {
@@ -36,19 +35,19 @@ export function Use(handler: ContextHandler): Decorator<any> {
         }
 
         if (!target.prototype.__run_use) {
-          
-            target.prototype.__run_use = async function (ctx:Context, key: string | null = null) {
-               
+
+            target.prototype.__run_use = async function (ctx: Context, key: string | null = null) {
+
                 if (target.prototype._class_use) {
-                    if(! await runUse(target.prototype._class_use,ctx)){
+                    if (! await runUse(target.prototype._class_use, ctx)) {
                         return false;
                     }
                 }
-                
+
                 if (key !== null) {
-                    
-                    if ( target.prototype._name_use &&  target.prototype._name_use[key]) {
-                        if(! await runUse(target.prototype._name_use[key],ctx)){
+
+                    if (target.prototype._name_use && target.prototype._name_use[key]) {
+                        if (! await runUse(target.prototype._name_use[key], ctx)) {
                             return false;
                         }
                     }
@@ -60,3 +59,16 @@ export function Use(handler: ContextHandler): Decorator<any> {
     }
 
 }
+
+
+export function Decorate<T>(decorator: Decorator<any>, target: T, key: string | null = null): T {
+
+    if (key == null) {
+        decorator(target);
+    } else {
+        decorator(target, key);
+    }
+    return target;
+
+}
+

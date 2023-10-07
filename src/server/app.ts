@@ -1,11 +1,11 @@
 import * as http from "http";
-import * as https from 'https';
 import * as url from 'url';
 import * as queryString from 'querystring';
 
-import { Context } from "./types";
+import { Context, ResponseAdvice } from "./types";
 import { ContextHandler, Controller, IController, InitHandler } from "./types";
 import * as fs from "fs";
+import { JsonResponseBodyAdvice } from "../response/JsonResponseBodyAdvice";
 
 type ModuleInfo = {
     apps: Record<string, ContextHandler | IController>,
@@ -25,26 +25,31 @@ export class App {
     private _modules: Record<string, ModuleInfo> = {};
     private _inits: InitHandler[] = [];
     private _middlewares: ContextHandler[] = [];
+
+    private _responseAdvice: ResponseAdvice = JsonResponseBodyAdvice;
+
     constructor(private _port: number = 8010) {
 
     }
-    responseJson(res: http.ServerResponse, data: any) {
-        res.setHeader('Content-Type', 'application/json;charset:utf-8');
-        res.end(JSON.stringify(data));
+    responseAdvice(handler: ResponseAdvice) {
+        this._responseAdvice = handler;
+        return this;
     }
-    apiSuccess(res: http.ServerResponse, data = {}) {
-        this.responseJson(res, {
-            code: 1,
+
+    success(res: http.ServerResponse, data = {}) {
+        this._responseAdvice({
+            success: true,
             msg: "成功",
             data: data
-        })
+        }, res)
     }
-    apiError(res: http.ServerResponse, msg: string, code = 0, data: any = {}) {
-        this.responseJson(res, {
+    error(res: http.ServerResponse, msg: string, code = 0, data: any = {}) {
+        this._responseAdvice({
+            success: false,
             code: code,
             msg: msg,
             data: data
-        })
+        }, res)
     }
     port(port: number): App {
         this._port = port;
@@ -223,11 +228,11 @@ export class App {
                             return this;
                         },
                         success(data: any) {
-                            that.apiSuccess(this.res, data);
+                            that.success(this.res, data);
                             this.canNext = false;
                         },
                         error(msg = "error", code = 0, data = {}) {
-                            that.apiError(this.res, msg, code, data);
+                            that.error(this.res, msg, code, data);
                             this.canNext = false;
                         },
                         html(htmlString: string) {
@@ -258,14 +263,14 @@ export class App {
 
                     let out = await doHandler(handler_object)
                     if (out !== undefined) {
-                        this.apiSuccess(response, out);
+                        this.success(response, out);
                     }
 
                 });
 
             }
             catch (error: any) {
-                this.apiError(response, typeof error === "string" ? error : error.message);
+                this.error(response, typeof error === "string" ? error : error.message);
             }
         }
 

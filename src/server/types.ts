@@ -42,7 +42,8 @@ export interface Controller {
 export interface ResponseOriginData {
     data: any;
     success: boolean;
-    msg?: string
+    msg?: string,
+    code?:number
 }
 
-export type ResponseBodyAdvice = (data: ResponseOriginData) => string | Promise<string>;
+export type ResponseAdvice = (data: ResponseOriginData, res: http.ServerResponse) => void;
