@@ -180,7 +180,7 @@ export class App {
 
                 let pathname = url_info.pathname as string;
 
-              
+
 
                 let postData = "";
                 request.on("data", (postDataChunk) => {
@@ -249,24 +249,29 @@ export class App {
                             return;
                         }
                     }
-                    let handler = this.findHander(pathname as string);
 
-                    for (let i = 0; i < handler.gets.length; i++) {
-                        params["$" + i] = handler.gets[i];
-                    }
-                    
-                    let doHandler = handler.handler;
-                    if (this._modules[pathname]) {
-                        if (!params.app) {
-                            let app_tmp_s = (pathname.endsWith("/") ? pathname : `${pathname}/`).split("/");
-                            params.app = app_tmp_s[2] + (app_tmp_s.length > 3 ? ("@" + app_tmp_s[3]) : "");
+                    try {
+                        let handler = this.findHander(pathname as string);
+                        for (let i = 0; i < handler.gets.length; i++) {
+                            params["$" + i] = handler.gets[i];
                         }
+
+                        let doHandler = handler.handler;
+                        if (this._modules[pathname]) {
+                            if (!params.app) {
+                                let app_tmp_s = (pathname.endsWith("/") ? pathname : `${pathname}/`).split("/");
+                                params.app = app_tmp_s[2] + (app_tmp_s.length > 3 ? ("@" + app_tmp_s[3]) : "");
+                            }
+                        }
+
+                        let out = await doHandler(handler_object)
+                        if (out !== undefined) {
+                            this.success(response, out);
+                        }
+                    } catch (error: any) {
+                        this.error(response, typeof error === "string" ? error : error.message);
                     }
 
-                    let out = await doHandler(handler_object)
-                    if (out !== undefined) {
-                        this.success(response, out);
-                    }
 
                 });
 
