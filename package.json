@@ -1,7 +1,7 @@
 {
   "name": "shiyue",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "a http server like express",
   "main": "dist/index",
   "scripts": {
     "build": "tsc"
