@@ -1,7 +1,6 @@
 
 import * as http from "http";
 import { App } from "./app";
-import { type } from "os";
 
 
 export type PromiseAble = Promise<void> | void
@@ -51,8 +50,9 @@ export interface ResponseOriginData {
 export type ResponseAdvice = (data: ResponseOriginData, res: http.ServerResponse) => void;
 
 type TextToKey<Str> = Str extends string ? { [key in Str]: string } : never;
-export type ArrayToObject<T extends string[]> = T extends [infer A, ...infer B] ? TextToKey<A> & (B extends string[] ? ArrayToObject<B> : never) : {}
+type TextMoreToKey<Str,S extends string> = Str extends `${infer O}${S}${infer REST}`?TextToKey<O> & TextMoreToKey<REST,S>:TextToKey<Str>
 
+export type ArrayToObject<T extends string[]> = T extends [infer A, ...infer B] ? TextMoreToKey<A,","> & (B extends string[] ? ArrayToObject<B> : never) : {}
 
 
 
