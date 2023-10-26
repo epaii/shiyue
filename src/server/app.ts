@@ -219,6 +219,16 @@ export class App {
                             if (arguments.length == 0) return params;
                             return params.hasOwnProperty(key) ? params[key] : dvalue;
                         },
+                        data(...keys: string[]) {
+                            let data: any = {};
+                            keys.forEach(item => {
+                                data[item] = this.params(item);
+                            });
+                            return data;
+                        },
+                        paramsData(...keys: string[]) {
+                            return this.data(...keys);
+                        },
                         paramsSet(key: string, value: string) {
                             params[key] = value;
                             return this;

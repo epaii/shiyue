@@ -1,6 +1,6 @@
 {
   "name": "shiyue",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "a http server like express",
   "main": "dist/index",
   "scripts": {

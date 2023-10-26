@@ -11,7 +11,9 @@ export interface Context {
     canNext: boolean,
     res: http.ServerResponse,
     req: http.IncomingMessage,
-    shareData: Object,
+    shareData: Record<string, any>,
+    data<T extends string[]>(...args: T): ArrayToObject<T>,
+    paramsData<T extends string[]>(...args: T): ArrayToObject<T>,
     params(key?: String, dvalue?: any): any;
     paramsSet(key: String, value: any): void;
     success(data: any): void;
@@ -43,7 +45,14 @@ export interface ResponseOriginData {
     data: any;
     success: boolean;
     msg?: string,
-    code?:number
+    code?: number
 }
 
 export type ResponseAdvice = (data: ResponseOriginData, res: http.ServerResponse) => void;
+
+type TextToKey<Str> = Str extends string ? { [key in Str]: string } : never;
+export type ArrayToObject<T extends string[]> = T extends [infer A, ...infer B] ? TextToKey<A> & (B extends string[] ? ArrayToObject<B> : never) : {}
+
+
+
+

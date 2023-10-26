@@ -1,7 +1,7 @@
 
 import { Context, ContextHandler, Controller, IController, defineController } from "../../../src"
 
-import { Use } from "../../../src/server/decorator";
+import { ParamsRequired, Use } from "../../../src/server/decorator";
 import { checkLogin, jeimi } from "../check/check";
 
 
@@ -10,7 +10,10 @@ import { checkLogin, jeimi } from "../check/check";
 export default class {
 
     @Use(jeimi)
+    @ParamsRequired("ddddddd")
     aa(ctx: Context) {
+       let d =  ctx.data("a","b");
+       
         return ctx.params();
     }
 
