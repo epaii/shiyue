@@ -12,8 +12,8 @@ export default class {
     @Use(jeimi)
     @ParamsRequired("ddddddd")
     aa(ctx: Context) {
-       let d =  ctx.data("a,c","b");
-    
+       let d =  ctx.data("a/d,c","b");
+       
         return ctx.params();
     }
 
