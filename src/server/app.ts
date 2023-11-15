@@ -6,6 +6,7 @@ import { Context, ResponseAdvice } from "./types";
 import { ContextHandler, Controller, IController, InitHandler } from "./types";
 import * as fs from "fs";
 import { JsonResponseBodyAdvice } from "../response/JsonResponseBodyAdvice";
+import { ServerOptions } from "https";
 
 type ModuleInfo = {
     apps: Record<string, ContextHandler | IController>,
@@ -294,7 +295,7 @@ export class App {
 
     }
 
-    async listen(port: number | null = null, httpsOptions = null) {
+    async listen(port: number | null = null, httpsOptions:ServerOptions |null = null) {
         if (port !== null) this.port(port);
         try {
             if (httpsOptions) {
